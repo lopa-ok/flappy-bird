@@ -9,7 +9,7 @@ canvas.height = window.innerHeight * 0.8;
 let birdX = 50;
 let birdY = canvas.height / 2;
 let birdRadius = 20;
-let gravity = 0.6;
+let gravity = 0.3;
 let jumpStrength = 10;
 let velocity = 0;
 
@@ -32,17 +32,30 @@ let gameOver = false;
 let gameStarted = false; 
 
 
+
 document.addEventListener('keydown', function(event) {
     if (event.code === 'Space') {
-        if (!gameStarted) {
+        if (!gameStarted || gameOver) {
             gameStarted = true;
+            gameOver = false;
+            resetGame(); 
             startGame();
-        } else if (!gameOver) {
+        } else {
             velocity = -jumpStrength; 
         }
     }
 });
 
+function resetGame() {
+    birdY = canvas.height / 2;
+    pipes = [];
+    clouds = [];
+    velocity = 0;
+    score = 0;
+    frameCount = 0;
+    pipeSpeed = 2; 
+    cloudSpeed = 0.5; 
+}
 
 function startGame() {
     requestAnimationFrame(draw);
@@ -85,7 +98,6 @@ function generatePipes() {
 }
 
 
-
 function drawClouds() {
     ctx.fillStyle = '#ffffff';
     for (let i = 0; i < clouds.length; i++) {
@@ -104,7 +116,6 @@ function drawClouds() {
         ctx.fill();
     }
 }
-
 
 
 function moveClouds() {
@@ -156,6 +167,7 @@ function checkCollisions() {
 }
 
 
+
 function update() {
     if (!gameOver) {
         velocity += gravity; 
@@ -204,6 +216,10 @@ function draw() {
     }
 
     if (gameOver) {
+        
+        drawBird();
+
+        
         ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -211,7 +227,7 @@ function draw() {
         ctx.font = '36px Arial';
         ctx.fillText('Game Over!', canvas.width / 2 - 100, canvas.height / 2 - 20);
         ctx.font = '24px Arial';
-        ctx.fillText('Press F5 to Restart', canvas.width / 2 - 120, canvas.height / 2 + 20);
+        ctx.fillText('Press Space to Restart', canvas.width / 2 - 120, canvas.height / 2 + 20);
     }
 
     
@@ -223,10 +239,11 @@ function draw() {
     }
 
     
-    if (gameStarted && !gameOver) {
-        requestAnimationFrame(draw);
-    }
+    requestAnimationFrame(draw);
 }
 
 
 let frameCount = 0;
+
+
+draw();

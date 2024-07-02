@@ -1,6 +1,5 @@
 body {
     margin: 0;
-    overflow: hidden;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -9,5 +8,5 @@ body {
 }
 
 canvas {
-    background-color: #70c5ce;
+    border: 5px solid #000000;
 }
