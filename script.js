@@ -30,21 +30,51 @@ let cloudFrequency = 300;
 let score = 0;
 let gameOver = false;
 let gameStarted = false; 
-
-
+let animationFrameId;
 
 document.addEventListener('keydown', function(event) {
     if (event.code === 'Space') {
-        if (!gameStarted || gameOver) {
+        if (!gameStarted && !gameOver) {
             gameStarted = true;
-            gameOver = false;
             resetGame(); 
             startGame();
-        } else {
+        } else if (gameStarted && !gameOver) {
             velocity = -jumpStrength; 
+        } else if (gameOver) {
+            gameStarted = false;
+            gameOver = false;
+            resetGame();
+            startGame();
+        }
+    } else if (!gameStarted && !gameOver) {
+        if (event.key === '1') {
+            setDifficulty('Easy');
+        } else if (event.key === '2') {
+            setDifficulty('Medium');
+        } else if (event.key === '3') {
+            setDifficulty('Hard');
         }
     }
 });
+
+function setDifficulty(difficulty) {
+    if (difficulty === 'Easy') {
+        pipeSpeed = 2;
+        cloudSpeed = 0.5;
+        jumpStrength = 10;
+    } else if (difficulty === 'Medium') {
+        pipeSpeed = 4;
+        cloudSpeed = 1;
+        jumpStrength = 8;
+    } else if (difficulty === 'Hard') {
+        pipeSpeed = 6;
+        cloudSpeed = 1.5;
+        jumpStrength = 6;
+    }
+    gameStarted = true;
+    resetGame();
+    startGame();
+}
 
 function resetGame() {
     birdY = canvas.height / 2;
@@ -53,12 +83,11 @@ function resetGame() {
     velocity = 0;
     score = 0;
     frameCount = 0;
-    pipeSpeed = 2; 
-    cloudSpeed = 0.5; 
+    cancelAnimationFrame(animationFrameId);
 }
 
 function startGame() {
-    requestAnimationFrame(draw);
+    animationFrameId = requestAnimationFrame(draw);
 }
 
 
@@ -69,7 +98,6 @@ function drawBird() {
     ctx.fill();
     ctx.closePath();
 }
-
 
 function drawPipes() {
     for (let i = 0; i < pipes.length; i++) {
@@ -193,10 +221,10 @@ function draw() {
     
     drawBorder();
 
-    
+
     drawClouds();
 
-    
+
     drawPipes();
 
     if (gameStarted && !gameOver) {
@@ -212,11 +240,12 @@ function draw() {
     if (!gameStarted) {
         ctx.fillStyle = '#ffffff';
         ctx.font = '24px Arial';
-        ctx.fillText('Press Space to Start', canvas.width / 2 - 120, canvas.height / 2);
+        ctx.fillText('Press 1 for Easy, 2 for Medium, 3 for Hard', canvas.width / 2 - 180, canvas.height / 2 - 20);
+        ctx.fillText('Press Space to Start', canvas.width / 2 - 120, canvas.height / 2 + 20);
     }
 
     if (gameOver) {
-        
+       
         drawBird();
 
         
@@ -238,8 +267,7 @@ function draw() {
         update();
     }
 
-    
-    requestAnimationFrame(draw);
+    animationFrameId = requestAnimationFrame(draw);
 }
 
 
